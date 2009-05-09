@@ -8,14 +8,11 @@ start(N, M) when is_integer(N), is_integer(M) ->
     io:format("***~n", []),
     First ! {start, Last}.
 
-%first_loop(Pid, 0) ->
-%    io:format("Done sending messages~n", []),
-%    Pid ! done,
-%    done;
 first_loop(Pid, 0) ->
     receive
         ring ->
             io:format("Done sending messages ~p~n", [self()]),
+            Pid ! done,
             done
     end;
 first_loop(Pid, M) ->
