@@ -2,6 +2,7 @@
 -compile(export_all).
 
 start(N, M) when is_integer(N), is_integer(M) ->
+    statistics(wall_clock),
     First = spawn(ring, first_loop, [nopid, M]),
     io:format("First ~p~n", [First]),
     Last = make_pid(N - 1, First),
@@ -13,6 +14,8 @@ first_loop(Pid, 0) ->
         ring ->
             io:format("Done sending messages ~p~n", [self()]),
             Pid ! done,
+            {_, T} = statistics(wall_clock),
+            io:format("Finished in ~p~n", [T]),
             done
     end;
 first_loop(Pid, M) ->
@@ -36,7 +39,6 @@ make_pid(N, Pid) ->
 loop(Pid) ->
     receive
         done ->
-            io:format("done ~p~n", [self()]),
             Pid ! done,
             done;
         ring ->
